@@ -35,7 +35,7 @@ Modify backup.sh
 vi backup.sh
 ```
 
-option in remains
+`Config`
 ```
 # Config (Before run this script, you need to modify these variables)
 
