@@ -13,7 +13,7 @@ Choose one right version for you ,and unzip to your dir.
 
 Then login your baidu account.
 ```
-# Maybe you need to give 'BaiduPCS-Go' run permission.
+# Maybe you need to give run permission to 'BaiduPCS-Go' .
 chmod -X BaiduPCS-Go 
 # or
 chmod 755 BaiduPCS-Go 
