@@ -109,5 +109,6 @@ UPLOAD_PACH="/LNMP_BACKUP" # upload to the dir
 
 ## Run
 ```
+chmod -X backup.sh
 bash backup.sh
 ```
