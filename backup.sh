@@ -61,14 +61,16 @@ OLD_BACKUP_FILE_SQL=db-*-$(date -d -3day +"%Y%m%d").sql
 Backup_Dir()
 {
     Backup_Path=$1
+    echo "BACKUP DIR: ${Backup_Path}"
     Dir_Name=`echo ${Backup_Path##*/}`
     Pre_Dir=`echo ${Backup_Path}|sed 's/'${Dir_Name}'//g'`
     tar zcf ${BACKUP_SAVE_PATH}www-${Dir_Name}-$(date +"%Y%m%d").tar.gz -C ${Pre_Dir} ${Dir_Name}
 }
+
 Get_DataBases(){
-    temp_file=/tmp/databases_$RANDOM
-    touch $temp_file
-    $CMD_MYSQL -u$MYSQL_USERNAME -p$MYSQL_PASSWORD <<EOF >$tmp_file
+    TEMP_FILE=/tmp/temp_file_$RANDOM
+    touch $TEMP_FILE
+    $CMD_MYSQL -u$MYSQL_USERNAME -p$MYSQL_PASSWORD <<EOF >$TEMP_FILE
 show databases;
 EOF
     i=0
@@ -77,10 +79,11 @@ EOF
         if [[ "${EXCLUDE_DATABASES[@]}" != *$line* ]] ;then
             let "i++"
             BACKUP_DATABASES[$i]=$line
-            echo 'DATEBASE: ${BACKUP_DATABASES[$i]} will be backupe'
+            echo "BACKUP DATABASE: ${BACKUP_DATABASES[$i]}"
         fi
-    done < $tmp_file
+    done < $TEMP_FILE
 }
+
 Backup_Sql()
 {
     ${CMD_MYSQLJUMP} -u$MYSQL_USERNAME -p$MYSQL_PASSWORD $1 > ${BACKUP_SAVE_PATH}db-$1-$(date +"%Y%m%d").sql
@@ -119,6 +122,7 @@ else
 fi
 
 # backup databases
+echo "Backup database files..."
 if [ ${IS_BACKUP_ALL_DATABASE} = 0 ]; then
     Get_DataBases
 fi
@@ -141,7 +145,7 @@ if [ ${IS_UPLOAD_BAIDUPCS} = 0 ]; then
     fi
     ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_WWW} ${UPLOAD_PACH}
     ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_SQL} ${UPLOAD_PACH}
-    echo "complete."
+    echo "upload complete."
 fi
 
 echo "end."
