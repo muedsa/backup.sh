@@ -112,3 +112,13 @@ UPLOAD_PACH="/LNMP_BACKUP" # upload to the dir
 chmod -X backup.sh
 bash backup.sh
 ```
+
+## Cron
+```
+# Ubuntu
+corntab -e
+# select editor and add:
+0 0 3 * * ? bash /yourpath/backup.sh > dev/null
+# reload corn
+service cron reload
+```
