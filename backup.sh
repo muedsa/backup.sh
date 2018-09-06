@@ -30,7 +30,7 @@ CMD_MYSQLJUMP='/usr/local/mysql/bin/mysqldump'
 MYSQL_USERNAME='root'
 MYSQL_PASSWORD='password'
 
-# if is 0, script will auto backup all dirs in 'BACKUP_DIR_PATH'
+# if is 0, script will auto backup all database in your mysql username
 IS_BACKUP_ALL_DATABASE=0
 # exclude these databases
 # +--------------------+
