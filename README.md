@@ -59,7 +59,7 @@ CMD_MYSQLJUMP='/usr/local/mysql/bin/mysqldump'
 MYSQL_USERNAME='root'
 MYSQL_PASSWORD='password'
 
-# if is 0, script will auto backup all database in your mysql username
+# if is 0, script will auto backup all database that your mysql username access to
 IS_BACKUP_ALL_DATABASE=0
 # exclude these databases
 # +--------------------+
@@ -70,7 +70,7 @@ IS_BACKUP_ALL_DATABASE=0
 # | performance_schema |
 # | test               |
 # +--------------------+
-# plase add no-backup databases, not delete these default databases
+# please add no-backup databases, not delete these default databases
 EXCLUDE_DATABASES=("Database" "mysql" "information_schema" "performance_schema" "test")
 # else, script will backup databases  in 'BACKUP_DATABASES'
 BACKUP_DATABASES=('yourdatabase1', 'yourdatabase2')
