@@ -39,9 +39,6 @@ vi backup.sh
 
 backup.sh
 ```
-# Config (Before run this script, you need to modify these variables)
-
-# dir for saving backup file
 BACKUP_SAVE_PATH='/home/backup/'
 
 # if is 0, script will auto backup all dirs in 'BACKUP_DIR_PATH'
@@ -59,7 +56,7 @@ CMD_MYSQLJUMP='/usr/local/mysql/bin/mysqldump'
 MYSQL_USERNAME='root'
 MYSQL_PASSWORD='password'
 
-# if is 0, script will auto backup all database that your mysql username access to
+# if is 0, script will auto backup all database in your mysql username
 IS_BACKUP_ALL_DATABASE=0
 # exclude these databases
 # +--------------------+
@@ -70,7 +67,7 @@ IS_BACKUP_ALL_DATABASE=0
 # | performance_schema |
 # | test               |
 # +--------------------+
-# please add no-backup databases, not delete these default databases
+# plase add no-backup databases, not delete these default databases
 EXCLUDE_DATABASES=("Database" "mysql" "information_schema" "performance_schema" "test")
 # else, script will backup databases  in 'BACKUP_DATABASES'
 BACKUP_DATABASES=('yourdatabase1', 'yourdatabase2')
@@ -80,19 +77,28 @@ NGINX_CONF_PATH='/usr/local/nginx/conf'
 # backup files or dirs in NGINX_CONF_PATH, use 'space' separate(if have space in filename , you can like NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl 'muedsa file1' 'muedsa file2'")
 NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl"
 
+# before your need to run cut_nginx_log.sh script
+IS_CUT_NGINX_LOGS=1
+# cut_ngix_logs cmd
+CMD_CUT_NGINX_LOGS='bash /home/lnmp1.5/tools/cut_nginx_logs.sh'
+# yesterday nginx logs backup path
+NGINX_LOGS_PATH="/home/wwwlogs/"$(date -d "yesterday" +"%Y")/$(date -d "yesterday" +"%m")
+
 # if is 0, upload backup files to BaiduPCS
 IS_UPLOAD_BAIDUPCS=0
-CMD_BAIDUPCS_GO="/root/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
+CMD_BAIDUPCS_GO="/home/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
 UPLOAD_PACH="/LNMP_BACKUP" # upload to the dir
 # if is 0, delete old backup files from BaiduPCS
 IS_DELETE_BAIDUPCS_OLD_FILE=1
 
 NEW_BACKUP_FILE_WWW=www-*-$(date +"%Y%m%d").tar.gz
 NEW_BACKUP_FILE_SQL=db-*-$(date +"%Y%m%d").sql
-NEW_BACKUP_FILE_NGINX=nginx-cfg-$(date +"%Y%m%d").tar.gz
+NEW_BACKUP_FILE_NGINX_CFGS=nginx-cfgs-$(date +"%Y%m%d").tar.gz
+NEW_BACKUP_FILE_NGINX_LOGS=nginx-logs-$(date +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_WWW=www-*-$(date -d -3day +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_SQL=db-*-$(date -d -3day +"%Y%m%d").sql
-OLD_BACKUP_FILE_NGINX=nginx-cfg-$(date -d -3day +"%Y%m%d").tar.gz
+OLD_BACKUP_FILE_NGINX_CFGS=nginx-cfgs-$(date -d -3day +"%Y%m%d").tar.gz
+OLD_BACKUP_FILE_NGINX_LOGS=nginx-logs-$(date -d -3day +"%Y%m%d").tar.gz
 ```
 
 You must check and modify the values in 'backup.sh'
@@ -131,6 +137,7 @@ service cron reload
 ### 20180907
 - feature: nginx cfg backup
 - fix: cron cmd error in README.md
+- feature: cut and backup nginx logs
 
 ### 20180906 
 - feature: backup website files and datebases
