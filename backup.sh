@@ -46,6 +46,11 @@ EXCLUDE_DATABASES=("Database" "mysql" "information_schema" "performance_schema" 
 # else, script will backup databases  in 'BACKUP_DATABASES'
 BACKUP_DATABASES=('yourdatabase1', 'yourdatabase2')
 
+# nginx conf path
+NGINX_CONF_PATH='/usr/local/nginx/conf'
+# backup files or dirs in NGINX_CONF_PATH, use 'space' separate(if have space in filename , you can like NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl 'muedsa file1' 'muedsa file2'")
+NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl"
+
 # if is 0, upload backup files to BaiduPCS
 IS_UPLOAD_BAIDUPCS=0
 CMD_BAIDUPCS_GO="/root/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
@@ -55,8 +60,10 @@ IS_DELETE_BAIDUPCS_OLD_FILE=1
 
 NEW_BACKUP_FILE_WWW=www-*-$(date +"%Y%m%d").tar.gz
 NEW_BACKUP_FILE_SQL=db-*-$(date +"%Y%m%d").sql
+NEW_BACKUP_FILE_NGINX=nginx-cfg-$(date +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_WWW=www-*-$(date -d -3day +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_SQL=db-*-$(date -d -3day +"%Y%m%d").sql
+OLD_BACKUP_FILE_NGINX=nginx-cfg-$(date -d -3day +"%Y%m%d").tar.gz
 
 Backup_Dir()
 {
@@ -131,10 +138,15 @@ for db in ${BACKUP_DATABASES[@]};do
     Backup_Sql ${db}
 done
 
+# backup nginx cfg files
+echo "Backup nginx cfg files..."
+tar zcf ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX} -C ${NGINX_CONF_PATH} ${NGINX_BACKUP_CONF_FILES_OR_DIRS}
+
 # delete old files
 echo "Delete old backup files..."
 rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_WWW}
 rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_SQL}
+rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_NGINX}
 
 # uploading backup files to BaiduPCS
 if [ ${IS_UPLOAD_BAIDUPCS} = 0 ]; then
@@ -142,9 +154,11 @@ if [ ${IS_UPLOAD_BAIDUPCS} = 0 ]; then
     if [ ${IS_DELETE_BAIDUPCS_OLD_FILE} = 0 ]; then
         ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_WWW}
         ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_SQL}
+        ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_NGINX}
     fi
     ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_WWW} ${UPLOAD_PACH}
     ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_SQL} ${UPLOAD_PACH}
+    ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX} ${UPLOAD_PACH}
     echo "upload complete."
 fi
 
