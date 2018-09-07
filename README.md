@@ -138,6 +138,7 @@ service cron reload
 - feature: nginx cfg backup
 - fix: cron cmd error in README.md
 - feature: cut and backup nginx logs
+- fix: I unkown array's start from index=0 or 1, but I modify i=0
 
 ### 20180906 
 - feature: backup website files and datebases
