@@ -51,19 +51,28 @@ NGINX_CONF_PATH='/usr/local/nginx/conf'
 # backup files or dirs in NGINX_CONF_PATH, use 'space' separate(if have space in filename , you can like NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl 'muedsa file1' 'muedsa file2'")
 NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl"
 
+# before your need to run cut_nginx_log.sh script
+IS_CUT_NGINX_LOGS=1
+# cut_ngix_logs cmd
+CMD_CUT_NGINX_LOGS='bash /home/lnmp1.5/tools/cut_nginx_logs.sh'
+# yesterday nginx logs backup path
+NGINX_LOGS_PATH="/home/wwwlogs/"$(date -d "yesterday" +"%Y")/$(date -d "yesterday" +"%m")
+
 # if is 0, upload backup files to BaiduPCS
 IS_UPLOAD_BAIDUPCS=0
-CMD_BAIDUPCS_GO="/root/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
+CMD_BAIDUPCS_GO="/home/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
 UPLOAD_PACH="/LNMP_BACKUP" # upload to the dir
 # if is 0, delete old backup files from BaiduPCS
 IS_DELETE_BAIDUPCS_OLD_FILE=1
 
 NEW_BACKUP_FILE_WWW=www-*-$(date +"%Y%m%d").tar.gz
 NEW_BACKUP_FILE_SQL=db-*-$(date +"%Y%m%d").sql
-NEW_BACKUP_FILE_NGINX=nginx-cfg-$(date +"%Y%m%d").tar.gz
+NEW_BACKUP_FILE_NGINX_CFGS=nginx-cfgs-$(date +"%Y%m%d").tar.gz
+NEW_BACKUP_FILE_NGINX_LOGS=nginx-logs-$(date +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_WWW=www-*-$(date -d -3day +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_SQL=db-*-$(date -d -3day +"%Y%m%d").sql
-OLD_BACKUP_FILE_NGINX=nginx-cfg-$(date -d -3day +"%Y%m%d").tar.gz
+OLD_BACKUP_FILE_NGINX_CFGS=nginx-cfgs-$(date -d -3day +"%Y%m%d").tar.gz
+OLD_BACKUP_FILE_NGINX_LOGS=nginx-logs-$(date -d -3day +"%Y%m%d").tar.gz
 
 Backup_Dir()
 {
@@ -84,8 +93,8 @@ EOF
     BACKUP_DATABASES=()
     while read line; do
         if [[ "${EXCLUDE_DATABASES[@]}" != *$line* ]] ;then
-            let "i++"
             BACKUP_DATABASES[$i]=$line
+            let "i++"
             echo "BACKUP DATABASE: ${BACKUP_DATABASES[$i]}"
         fi
     done < $TEMP_FILE
@@ -140,13 +149,25 @@ done
 
 # backup nginx cfg files
 echo "Backup nginx cfg files..."
-tar zcf ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX} -C ${NGINX_CONF_PATH} ${NGINX_BACKUP_CONF_FILES_OR_DIRS}
+tar zcf ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX_CFGS} -C ${NGINX_CONF_PATH} ${NGINX_BACKUP_CONF_FILES_OR_DIRS}
+
+# backup nginx logs
+echo "Backup nginx logs..."
+if [ ${IS_CUT_NGINX_LOGS} = 0 ]; then
+    ${CMD_CUT_NGINX_LOGS}
+fi
+temp_dirs=''
+for dd in $(ls -l ${NGINX_LOGS_PATH} |awk '/^-.*_'$(date -d "yesterday" +"%Y%m%d")'.log$/ {print $NF}');do
+    temp_dirs=${temp_dirs}' '${dd}
+done
+tar zcf ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX_LOGS} -C ${NGINX_LOGS_PATH} ${temp_dirs}
 
 # delete old files
 echo "Delete old backup files..."
 rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_WWW}
 rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_SQL}
-rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_NGINX}
+rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_NGINX_CFGS}
+rm -f ${BACKUP_SAVE_PATH}${OLD_BACKUP_FILE_NGINX_LOGS}
 
 # uploading backup files to BaiduPCS
 if [ ${IS_UPLOAD_BAIDUPCS} = 0 ]; then
@@ -154,11 +175,13 @@ if [ ${IS_UPLOAD_BAIDUPCS} = 0 ]; then
     if [ ${IS_DELETE_BAIDUPCS_OLD_FILE} = 0 ]; then
         ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_WWW}
         ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_SQL}
-        ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_NGINX}
+        ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_NGINX_CFGS}
+        ${CMD_BAIDUPCS_GO} rm ${UPLOAD_PACH}/${OLD_BACKUP_FILE_NGINX_LOGS}
     fi
     ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_WWW} ${UPLOAD_PACH}
     ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_SQL} ${UPLOAD_PACH}
-    ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX} ${UPLOAD_PACH}
+    ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX_CFGS} ${UPLOAD_PACH}
+    ${CMD_BAIDUPCS_GO} u ${BACKUP_SAVE_PATH}${NEW_BACKUP_FILE_NGINX_LOGS} ${UPLOAD_PACH}
     echo "upload complete."
 fi
 
