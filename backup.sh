@@ -5,7 +5,7 @@
 # createTime:   20168-09-06
 # description:  backup LNMP's websites and mysql databases, then upload backup files to BaiduPCS(you need install BaiduPCS-GO from https://github.com/iikira/BaiduPCS-Go and login your baidu account)
 # author:       muedsa
-# website:      https://wwww.muedsa.com
+# website:      https://www.muedsa.com
 # github:       https://github.com/muedsa/backup.sh
 # lnmp website: https://lnmp.org/
 # ----------------------------------------------------------------------
