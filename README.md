@@ -15,7 +15,9 @@ Then login your baidu account.
 # Maybe you need to give run permission to 'BaiduPCS-Go' .
 chmod -X BaiduPCS-Go 
 # or
-chmod 755 BaiduPCS-Go 
+chmod 754 BaiduPCS-Go 
+# Warning! You should not give the run permission to other user or group for safety, 
+because other can upload your  files in linux to his/her BaiduPCS.
 
 # Login
 BaiduPCS-Go login
