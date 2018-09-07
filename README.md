@@ -73,6 +73,11 @@ EXCLUDE_DATABASES=("Database" "mysql" "information_schema" "performance_schema" 
 # else, script will backup databases  in 'BACKUP_DATABASES'
 BACKUP_DATABASES=('yourdatabase1', 'yourdatabase2')
 
+# nginx conf path
+NGINX_CONF_PATH='/usr/local/nginx/conf'
+# backup files or dirs in NGINX_CONF_PATH, use 'space' separate(if have space in filename , you can like NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl 'muedsa file1' 'muedsa file2'")
+NGINX_BACKUP_CONF_FILES_OR_DIRS="vhost ssl"
+
 # if is 0, upload backup files to BaiduPCS
 IS_UPLOAD_BAIDUPCS=0
 CMD_BAIDUPCS_GO="/root/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
@@ -82,26 +87,22 @@ IS_DELETE_BAIDUPCS_OLD_FILE=1
 
 NEW_BACKUP_FILE_WWW=www-*-$(date +"%Y%m%d").tar.gz
 NEW_BACKUP_FILE_SQL=db-*-$(date +"%Y%m%d").sql
+NEW_BACKUP_FILE_NGINX=nginx-cfg-$(date +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_WWW=www-*-$(date -d -3day +"%Y%m%d").tar.gz
 OLD_BACKUP_FILE_SQL=db-*-$(date -d -3day +"%Y%m%d").sql
+OLD_BACKUP_FILE_NGINX=nginx-cfg-$(date -d -3day +"%Y%m%d").tar.gz
 ```
 
 You must check and modify the values in 'backup.sh'
 ```
-... line 24
-
 # mysql cmd path
 CMD_MYSQL='/usr/local/mysql/bin/mysql'
 # mysqldump cmd path
 CMD_MYSQLJUMP='/usr/local/mysql/bin/mysqldump'
 
-... line 29
-
 # mysql username and password
 MYSQL_USERNAME='root'
 MYSQL_PASSWORD='password' 
-
-... line 51
 
 CMD_BAIDUPCS_GO="/root/BaiduPCS-Go/BaiduPCS-Go" # BaiduPCS-Go cmd path
 UPLOAD_PACH="/LNMP_BACKUP" # upload to the dir
@@ -118,7 +119,17 @@ bash backup.sh
 # Ubuntu
 corntab -e
 # select editor and add:
-0 0 3 * * ? bash /yourpath/backup.sh > dev/null
+0 0 3 * * ? bash /root/backup.sh > /home/backup/log/$(date +"\%Y\%m\%d-\%H:\%M:\%S").log 2>&1
 # reload corn
 service cron reload
 ```
+
+## Update
+
+### 20180907
+- feature: nginx cfg backup
+- fix: cron cmd error in README.md
+
+### 20180906 
+- feature: backup website files and datebases
+- feature: upload backup files to BaiduPCS
