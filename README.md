@@ -135,6 +135,9 @@ service cron reload
 ## Update
 
 ### 20180907
+- fix: a stupid mistake in 'cut_nginx_logs.sh'
+
+### 20180907
 - feature: nginx cfg backup
 - fix: cron cmd error in README.md
 - feature: cut and backup nginx logs
