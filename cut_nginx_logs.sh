@@ -6,11 +6,12 @@
 log_files_path="/home/wwwlogs/"
 log_files_dir=${log_files_path}$(date -d "yesterday" +"%Y")/$(date -d "yesterday" +"%m")
 
-# I modify some codes for it cut all .log
+# I modify some codes for it can cut all *.log
 # editor: muedsa
 log_files_name=()
 log_files_num=0
-for dd in $(ls -l ${log_files_dir} |awk '/^-.*_'$(date -d "yesterday" +"%Y%m%d")').log$/ {print $NF}');do
+for dd in $(ls -l ${log_files_path} |awk '/^-.*\.log$/ {print $NF}');do
+    echo "CUT LOG: ${log_files_path}/${log_files_name[$log_files_num]}"
     log_files_name[$log_files_num]=${dd%.log}
     let 'log_files_num++'
 done
@@ -30,7 +31,8 @@ log_files_num=${#log_files_name[@]}
 
 #cut nginx log files
 for((i=0;i<$log_files_num;i++));do
-mv ${log_files_path}${log_files_name[i]}.log ${log_files_dir}/${log_files_name[i]}_$(date -d "yesterday" +"%Y%m%d").log
+    echo "Create LOG: ${log_files_dir}/${log_files_name[i]}_$(date -d "yesterday" +"%Y%m%d").log"
+    mv ${log_files_path}${log_files_name[i]}.log ${log_files_dir}/${log_files_name[i]}_$(date -d "yesterday" +"%Y%m%d").log
 done
 
 #delete 30 days ago nginx log files
