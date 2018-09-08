@@ -127,7 +127,7 @@ bash backup.sh
 # Ubuntu
 corntab -e
 # select editor and add:
-0  0 * * * bash /root/backup.sh > /home/backup/log/$(date +"\%Y\%m\%d-\%H:\%M:\%S").log 2>&1
+0  0 * * * bash /root/backup.sh > /home/backup/log/$(date +"\%Y\%m\%d-\%H\%M\%S").log 2>&1
 # reload corn
 service cron reload
 ```
