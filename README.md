@@ -134,7 +134,7 @@ service cron reload
 
 ## Update
 
-### 20180907
+### 20180908
 - fix: a stupid mistake in 'cut_nginx_logs.sh'
 
 ### 20180907
