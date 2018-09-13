@@ -95,7 +95,7 @@ EOF
         if [[ "${EXCLUDE_DATABASES[@]}" != *$line* ]] ;then
             BACKUP_DATABASES[$i]=$line
             let "i++"
-            echo "BACKUP DATABASE: ${BACKUP_DATABASES[$i]}"
+            echo "BACKUP DATABASE: "${BACKUP_DATABASES[$i]}
         fi
     done < $TEMP_FILE
 }

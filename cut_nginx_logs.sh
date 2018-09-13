@@ -11,7 +11,7 @@ log_files_dir=${log_files_path}$(date -d "yesterday" +"%Y")/$(date -d "yesterday
 log_files_name=()
 log_files_num=0
 for dd in $(ls -l ${log_files_path} |awk '/^-.*\.log$/ {print $NF}');do
-    echo "CUT LOG: ${log_files_path}/${log_files_name[$log_files_num]}"
+    echo "CUT LOG: "${log_files_path}/${log_files_name[$log_files_num]}
     log_files_name[$log_files_num]=${dd%.log}
     let 'log_files_num++'
 done
